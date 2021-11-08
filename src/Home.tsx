@@ -19,13 +19,61 @@ import {
   shortenAddress,
 } from "./candy-machine";
 
-const ConnectButton = styled(WalletDialogButton)``;
+const ConnectButton = styled(WalletDialogButton)`
+  font-family: 'Poppins', sans-serif !important;
+  background: linear-gradient(
+      90deg, #FC384C 0%, #B31A2A 100%) !important;
+  box-shadow: 0px 0px 10px #fc384c;
+  font-size: 15px;
+  padding: 15px 50px !important;
+  font-weight: 600;
+  color: #E8E8E8 !important;
+  border-radius: 50px !important;
+  border: none;
+  justify-content: center !important;
+`;
 
 const CounterText = styled.span``; // add your styles here
 
-const MintContainer = styled.div``; // add your styles here
+const Header = styled.h1`
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+  color: #E8E8E8;
+  text-shadow: 2px 2px 3px #2a3c46;
+`;
 
-const MintButton = styled(Button)``; // add your styles here
+const MintContainer = styled.div`
+  display: flex;
+  height: 100vh;
+  padding: 0 20px;
+  justify-content: center;
+  align-items: center;
+`; // add your styles here
+
+const MintInformation = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 10px 20px;
+  border: 1px solid #7C87B6;
+  border-radius: 15px;
+`; // add your styles here
+
+const MintButton = styled(Button)`
+  font-family: 'Poppins', sans-serif !important;
+  background: linear-gradient(
+      90deg, #FC384C 0%, #B31A2A 100%) !important;
+  box-shadow: 0px 0px 10px #fc384c;
+  font-size: 15px;
+  padding: 15px 50px !important;
+  font-weight: 600;
+  color: #E8E8E8 !important;
+  border-radius: 50px !important;
+  border: none;
+  justify-content: center;
+`; // add your styles here
 
 export interface HomeProps {
   candyMachineId: anchor.web3.PublicKey;
@@ -167,46 +215,43 @@ const Home = (props: HomeProps) => {
 
   return (
     <main>
-      {wallet && (
-        <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || "")}</p>
-      )}
-
-      {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
-
-      {wallet && <p>Total Available: {itemsAvailable}</p>}
-
-      {wallet && <p>Redeemed: {itemsRedeemed}</p>}
-
-      {wallet && <p>Remaining: {itemsRemaining}</p>}
-
       <MintContainer>
-        {!wallet ? (
-          <ConnectButton>Connect Wallet</ConnectButton>
-        ) : (
-          <MintButton
-            disabled={isSoldOut || isMinting || !isActive}
-            onClick={onMint}
-            variant="contained"
-          >
-            {isSoldOut ? (
-              "SOLD OUT"
-            ) : isActive ? (
-              isMinting ? (
-                <CircularProgress />
-              ) : (
-                "MINT"
-              )
-            ) : (
-              <Countdown
-                date={startDate}
-                onMount={({ completed }) => completed && setIsActive(true)}
-                onComplete={() => setIsActive(true)}
-                renderer={renderCounter}
-              />
-            )}
-          </MintButton>
-        )}
-      </MintContainer>
+        <MintInformation>
+          {!wallet ? (
+            <div>
+              <Header>Connect to Mint</Header>
+              <ConnectButton>Connect Wallet</ConnectButton>
+            </div>
+          ) : (
+            <div>
+              <Header>Mint</Header>
+              <p>Mint your Genesis Nyan NFT!</p>
+              {wallet && <p>Minted: {itemsRedeemed} / {itemsAvailable}</p>}
+              <MintButton
+                  disabled={isSoldOut || isMinting || !isActive}
+                  onClick={onMint}
+                  variant="contained"
+              >
+                {isSoldOut ? (
+                    "SOLD OUT"
+                ) : isActive ? (
+                    isMinting ? (
+                        <CircularProgress />
+                    ) : (
+                        "MINT"
+                    )
+                ) : (
+                    <Countdown
+                        date={startDate}
+                        onMount={({ completed }) => completed && setIsActive(true)}
+                        onComplete={() => setIsActive(true)}
+                        renderer={renderCounter}
+                    />
+                )}
+              </MintButton>
+            </div>
+          )}</MintInformation>
+        </MintContainer>
 
       <Snackbar
         open={alertState.open}
